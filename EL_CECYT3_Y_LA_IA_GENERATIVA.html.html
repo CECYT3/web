@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CECyT3 y la IA Generativa</title>
+<style>
+  body {
+    margin: 0; font-family: Arial, sans-serif; background: #f4f4f4; color: #333;
+  }
+  header {
+    background-color: #800020;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  }
+  header .left, header .right {
+    display: flex;
+    align-items: center;
+  }
+  header img {
+    height: 50px;
+    margin: 0 10px;
+  }
+  #time {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .dropdown {
+    position: relative;
+    margin-left: 20px;
+  }
+  .dropdown button {
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 250px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .dropdown-content div {
+    color: black;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  .dropdown-content div:last-child {
+    border-bottom: none;
+  }
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  .language-selector {
+    margin: 10px auto;
+    text-align: center;
+  }
+  .language-selector select {
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  .folder {
+    background-color: #800020;
+    color: white;
+    text-align: center;
+    padding: 25px 20px;
+    font-size: 28px;
+    font-weight: bold;
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 15px;
+  }
+  .folder img {
+    width: 120px;
+    margin-bottom: 10px;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: #555;
+    border-radius: 0 0 15px 15px;
+  }
+  nav a {
+    flex: 1 1 120px;
+    padding: 14px 10px;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    background-color: #888;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+  }
+  nav a:hover {
+    background-color: #aaa;
+  }
+  section {
+    padding: 25px 20px;
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+  }
+  section h2 {
+    color: #800020;
+    margin-bottom: 15px;
+  }
+  section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+  }
+  .ai-assistant {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #800020;
+    color: white;
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(128,0,32,0.5);
+    animation: float 4s ease-in-out infinite;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+  }
+  .ai-assistant img {
+    width: 70px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .notification-text {
+    position: absolute;
+    bottom: 100%;
+    right: 50%;
+    transform: translateX(50%);
+    background-color: #800020;
+    color: white;
+    font-size: 14px;
+    border-radius: 12px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  }
+  footer {
+    background-color: #800020;
+    color: white;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="left">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Escudo_CECyT3.png" alt="Escudo CECyT 3" title="CECyT 3" />
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/Escudo_IPN.png" alt="Escudo IPN" title="IPN" />
+  </div>
+  <div id="time"></div>
+  <div class="right">
+    <div class="dropdown">
+      <button id="tema-boton">Apartados importantes</button>
+      <div class="dropdown-content">
+        <div id="profesor-text"><strong>El profesor más chido del CECyT3:</strong> Carlos Arrieta Pérez</div>
+        <div id="creditos-text"><strong>Créditos:</strong> Grupo 2IM6</div>
+        <div id="agradecimiento-especial">Agradecimientos especiales</div>
+        <div id="agradecimientos-text">Contribución de información: Einar Daniel Sinecio Castillo y Horacio Reséndiz Hernández</div>
+      </div>
+    </div>
+    <div class="language-selector">
+      <select id="language" onchange="cambiarIdioma()">
+        <option value="es" selected>Español</option>
+        <option value="en">Inglés</option>
+        <option value="de">Alemán</option>
+        <option value="ar">Árabe</option>
+        <option value="zh">Chino</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<div class="folder">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Escudo_CECyT3.png" alt="Carpeta CECyT3" />
+  CECyT3 y la IA Generativa
+</div>
+
+<nav>
+  <a href="#introduccion" style="background:#7d1f2d;">Introducción de la IA generativa</a>
+  <a href="#caracteristicas" style="background:#8c2735;">Características</a>
+  <a href="#ensenanza" style="background:#9a3040;">Enseñanza y aprendizaje</a>
+  <a href="#tutoria" style="background:#a83a4c;">Herramientas de tutoría</a>
+  <a href="#problemas" style="background:#b54659;">Solución de problemas</a>
+  <a href="#alfabetizacion" style="background:#c25266;">Alfabetización con gráficas</a>
+</nav>
+
+<section id="introduccion">
+  <h2 id="intro-title">Introducción de la IA Generativa</h2>
+  <p id="intro-text">La IA generativa permite crear contenido como texto, imágenes, música o código, aprendiendo de datos existentes. Es una herramienta poderosa para la educación y creatividad.</p>
+</section>
+
+<section id="caracteristicas">
+  <h2 id="carac-title">Características</h2>
+  <ul id="carac-list">
+    <li>Genera contenido original</li>
+    <li>Aprende de grandes cantidades de datos</li>
+    <li>Aplicable en múltiples disciplinas</li>
+  </ul>
+</section>
+
+<section id="ensenanza">
+  <h2 id="ensenanza-title">Enseñanza y aprendizaje</h2>
+  <p id="ensenanza-text">La IA puede personalizar materiales educativos, responder preguntas, y adaptarse a distintos estilos de aprendizaje.</p>
+</section>
+
+<section id="tutoria">
+  <h2 id="tutoria-title">Herramientas de tutoría</h2>
+  <ul id="tutoria-list">
+    <li>Asistentes de escritura</li>
+    <li>Generadores de ejercicios</li>
+    <li>Retroalimentación inmediata</li>
+  </ul>
+</section>
+
+<section id="problemas">
+  <h2 id="problemas-title">Solución de problemas</h2>
+  <p id="problemas-text">La IA ayuda a resolver dudas en las siguientes materias del segundo semestre, mejorando la comprensión y práctica en cada una:</p>
+</section>
+
+<section id="materias">
+  <h2 id="materias-title">Materias Segundo Semestre (CECyT 3, 2024)</h2>
+  <ul id="materias-list">
+    <li>Álgebra</li>
+    <li>Trigonometría</li>
+    <li>Física</li>
+    <li>Química</li>
+    <li>Inglés II</li>
+    <li>Comunicación</li>
+    <li>Programación</li>
+    <li>Desarrollo Personal</li>
+  </ul>
+</section>
+
+<section id="alfabetizacion">
+  <h2 id="alfabetizacion-title">Alfabetización con gráficas</h2>
+  <p id="alfabetizacion-text">La IA generativa facilita la comprensión a través de visualizaciones y gráficos que apoyan el aprendizaje en materias complejas.</p>
+  <img id="alfabetizacion-img" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Bar_chart_example.svg" alt="Ejemplo de gráfico" style="max-width:100%; border-radius: 10px; margin-top: 15px;">
+</section>
+
+<!-- Asistente IA -->
+<div class="ai-assistant" title="Asistente IA">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/ChatGPT_logo.svg/120px-ChatGPT_logo.svg.png" alt="ChatGPT" />
+  <div>¿Necesitas ayuda poliguapo?</div>
+</div>
+
+<footer>
+  &copy; 2024 CECyT 3 - Instituto Politécnico Nacional
+</footer>
+
+<script>
+  // Mostrar hora actual en el header
+  function mostrarHora() {
+    const timeEl = document.getElementById('time');
+    const ahora = new Date();
+    let hora = ahora.getHours();
+    let minutos = ahora.getMinutes();
+    let segundos = ahora.getSeconds();
+    if (hora < 10) hora = '0' + hora;
+    if (minutos < 10) minutos = '0' + minutos;
+    if (segundos < 10) segundos = '0' + segundos;
+    timeEl.textContent = `${hora}:${minutos}:${segundos}`;
+  }
+  setInterval(mostrarHora, 1000);
+  mostrarHora();
+
+  // Contenidos para cada idioma
+  const contenido = {
+    es: {
+      "intro-title": "Introducción de la IA Generativa",
+      "intro-text": "La IA generativa permite crear contenido como texto, imágenes, música o código, aprendiendo de datos existentes. Es una herramienta poderosa para la educación y creatividad.",
+      "carac-title": "Características",
+      "carac-list": [
+        "Genera contenido original",
+        "Aprende de grandes cantidades de datos",
+        "Aplicable en múltiples disciplinas"
+      ],
+      "ensenanza-title": "Enseñanza y aprendizaje",
+      "ensenanza-text": "La IA puede personalizar materiales educativos, responder preguntas, y adaptarse a distintos estilos de aprendizaje.",
+      "tutoria-title": "Herramientas de tutoría",
+      "tutoria-list": [
+        "Asistentes de escritura",
+        "Generadores de ejercicios",
+        "Retroalimentación inmediata"
+      ],
+      "problemas-title": "Solución de problemas",
+      "problemas-text": "La IA ayuda a resolver dudas en las siguientes materias del segundo semestre, mejorando la comprensión y práctica en cada una:",
+      "materias-title": "Materias Segundo Semestre (CECyT 3, 2024)",
+      "materias-list": [
+        "Álgebra",
+        "Trigonometría",
+        "Física",
+        "Química",
+        "Inglés II",
+        "Comunicación",
+        "Programación",
+        "Desarrollo Personal"
+      ],
+      "alfabetizacion-title": "Alfabetización con gráficas",
+      "alfabetizacion-text": "La IA generativa facilita la comprensión a través de visualizaciones y gráficos que apoyan el aprendizaje en materias complejas."
+    },
+    en: {
+      "intro-title": "Introduction to Generative AI",
+      "intro-text": "Generative AI enables the creation of content such as text, images, music, or code by learning from existing data. It's a powerful tool for education and creativity.",
+      "carac-title": "Features",
+      "carac-list": [
+        "Generates original content",
+        "Learns from large amounts of data",
+        "Applicable across multiple disciplines"
+      ],
+      "ensenanza-title": "Teaching and Learning",
+      "ensenanza-text": "AI can personalize educational materials, answer questions, and adapt to different learning styles.",
+      "tutoria-title": "Tutoring Tools",
+      "tutoria-list": [
+        "Writing assistants",
+        "Exercise generators",
+        "Immediate feedback"
+      ],
+      "problemas-title": "Problem Solving",
+      "problemas-text": "AI helps to solve doubts in the following second-semester subjects, improving understanding and practice in each:",
+      "materias-title": "Second Semester Subjects (CECyT 3, 2024)",
+      "materias-list": [
+        "Algebra",
+        "Trigonometry",
+        "Physics",
+        "Chemistry",
+        "English II",
+        "Communication",
+        "Programming",
+        "Personal Development"
+      ],
+      "alfabetizacion-title": "Literacy with Graphs",
+      "alfabetizacion-text": "Generative AI facilitates understanding through visualizations and graphs that support learning in complex subjects."
+    },
+    de: {
+      "intro-title": "Einführung in generative KI",
+      "intro-text": "Generative KI ermöglicht die Erstellung von Inhalten wie Text, Bildern, Musik oder Code, indem sie aus vorhandenen Daten lernt. Es ist ein leistungsfähiges Werkzeug für Bildung und Kreativität.",
+      "carac-title": "Eigenschaften",
+      "carac-list": [
+        "Erzeugt originelle Inhalte",
+        "Lernt aus großen Datenmengen",
+        "Anwendbar in mehreren Disziplinen"
+      ],
+      "ensenanza-title": "Lehren und Lernen",
+      "ensenanza-text": "KI kann Bildungsinhalte personalisieren, Fragen beantworten und sich an verschiedene Lernstile anpassen.",
+      "tutoria-title": "Tutorwerkzeuge",
+      "tutoria-list": [
+        "Schreibassistenten",
+        "Übungsgeneratoren",
+        "Sofortiges Feedback"
+      ],
+      "problemas-title": "Problemlösung",
+      "problemas-text": "KI hilft, Zweifel in den folgenden Fächern des zweiten Semesters zu lösen und verbessert das Verständnis und die Praxis in jedem:",
+      "materias-title": "Fächer des zweiten Semesters (CECyT 3, 2024)",
+      "materias-list": [
+        "Algebra",
+        "Trigonometrie",
+        "Physik",
+        "Chemie",
+        "Englisch II",
+        "Kommunikation",
+        "Programmierung",
+        "Persönliche Entwicklung"
+      ],
+      "alfabetizacion-title": "Alphabetisierung mit Grafiken",
+      "alfabetizacion-text": "Generative KI erleichtert das Verständnis durch Visualisierungen und Grafiken, die das Lernen in komplexen Fächern unterstützen."
+    },
+    ar: {
+      "intro-title": "مقدمة في الذكاء الاصطناعي التوليدي",
+      "intro-text": "يمكن للذكاء الاصطناعي التوليدي إنشاء محتوى مثل النصوص والصور والموسيقى أو الكود من خلال التعلم من البيانات الموجودة. إنه أداة قوية للتعليم والإبداع.",
+      "carac-title": "الميزات",
+      "carac-list": [
+        "ينشئ محتوى أصلي",
+        "يتعلم من كميات كبيرة من البيانات",
+        "قابل للتطبيق في تخصصات متعددة"
+      ],
+      "ensenanza-title": "التعليم والتعلم",
+      "ensenanza-text": "يمكن للذكاء الاصطناعي تخصيص المواد التعليمية، والإجابة على الأسئلة، والتكيف مع أنماط التعلم المختلفة.",
+      "tutoria-title": "أدوات التدريس",
+      "tutoria-list": [
+        "مساعدات الكتابة",
+        "مولدات التمارين",
+        "ردود فورية"
+      ],
+      "problemas-title": "حل المشكلات",
+      "problemas-text": "يساعد الذكاء الاصطناعي في حل الشكوك في المواد التالية للفصل الدراسي الثاني، مما يحسن الفهم والممارسة في كل منها:",
+      "materias-title": "مواد الفصل الدراسي الثاني (CECyT 3، 2024)",
+      "materias-list": [
+        "الجبر",
+        "المثلثات",
+        "الفيزياء",
+        "الكيمياء",
+        "الإنجليزية II",
+        "الاتصالات",
+        "البرمجة",
+        "التنمية الشخصية"
+      ],
+      "alfabetizacion-title": "محو الأمية باستخدام الرسوم البيانية",
+      "alfabetizacion-text": "يسهل الذكاء الاصطناعي التوليدي الفهم من خلال التصورات والرسوم البيانية التي تدعم التعلم في المواد المعقدة."
+    },
+    zh: {
+      "intro-title": "生成式人工智能简介",
+      "intro-text": "生成式人工智能能够通过学习现有数据来创建文本、图像、音乐或代码等内容。这是教育和创造力的强大工具。",
+      "carac-title": "特点",
+      "carac-list": [
+        "生成原创内容",
+        "从大量数据中学习",
+        "适用于多种学科"
+      ],
+      "ensenanza-title": "教学与学习",
+      "ensenanza-text": "人工智能可以个性化教育材料，回答问题，并适应不同的学习风格。",
+      "tutoria-title": "辅导工具",
+      "tutoria-list": [
+        "写作助手",
+        "练习生成器",
+        "即时反馈"
+      ],
+      "problemas-title": "问题解决",
+      "problemas-text": "人工智能帮助解决以下第二学期科目的疑问，提升每门课程的理解和实践：",
+      "materias-title": "第二学期课程 (CECyT 3，2024)",
+      "materias-list": [
+        "代数",
+        "三角学",
+        "物理",
+        "化学",
+        "英语 II",
+        "交流",
+        "编程",
+        "个人发展"
+      ],
+      "alfabetizacion-title": "图形识字",
+      "alfabetizacion-text": "生成式人工智能通过可视化和图表促进对复杂科目的理解。"
+    }
+  };
+
+  // Función para cambiar el idioma y actualizar los textos
+  function cambiarIdioma() {
+    const lang = document.getElementById('language').value;
+    const text = contenido[lang];
+
+    document.getElementById('intro-title').textContent = text["intro-title"];
+    document.getElementById('intro-text').textContent = text["intro-text"];
+
+    document.getElementById('carac-title').textContent = text["carac-title"];
+    // Actualiza lista de características
+    const caracListEl = document.getElementById('carac-list');
+    caracListEl.innerHTML = '';
+    text["carac-list"].forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      caracListEl.appendChild(li);
+    });
+
+    document.getElementById('ensenanza-title').textContent = text["ensenanza-title"];
+    document.getElementById('ensenanza-text').textContent = text["ensenanza-text"];
+
+    document.getElementById('tutoria-title').textContent = text["tutoria-title"];
+    const tutoriaListEl = document.getElementById('tutoria-list');
+    tutoriaListEl.innerHTML = '';
+    text["tutoria-list"].forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      tutoriaListEl.appendChild(li);
+    });
+
+    document.getElementById('problemas-title').textContent = text["problemas-title"];
+    document.getElementById('problemas-text').textContent = text["problemas-text"];
+
+    document.getElementById('materias-title').textContent = text["materias-title"];
+    const materiasListEl = document.getElementById('materias-list');
+    materiasListEl.innerHTML = '';
+    text["materias-list"].forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      materiasListEl.appendChild(li);
+    });
+
+    document.getElementById('alfabetizacion-title').textContent = text["alfabetizacion-title"];
+    document.getElementById('alfabetizacion-text').textContent = text["alfabetizacion-text"];
+  }
+
+  // Inicializar la página en español
+  cambiarIdioma();
+</script>
+
+</body>
+</html>
